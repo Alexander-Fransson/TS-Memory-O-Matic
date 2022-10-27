@@ -10,5 +10,4 @@ class Card extends HTMLElement {
     }
 
 
-
 }
