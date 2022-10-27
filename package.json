@@ -1,0 +1,8 @@
+{
+  "name": "TS-Memory-O-Matic",
+  "version": "1.0.0",
+  "main": "index.js",
+  "repository": "https://github.com/ntijoh-Alexander-Fransson/TS-Memory-O-Matic.git",
+  "author": "daniel-ljung-nti-johanneberg <daniel.ljung@elev.ga.ntig.se>",
+  "license": "MIT"
+}
