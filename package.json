@@ -4,5 +4,11 @@
   "main": "index.js",
   "repository": "https://github.com/ntijoh-Alexander-Fransson/TS-Memory-O-Matic.git",
   "author": "daniel-ljung-nti-johanneberg <daniel.ljung@elev.ga.ntig.se>",
-  "license": "MIT"
+  "license": "MIT",
+  "dependencies": {
+    "lodash": "^4.17.21"
+  },
+  "devDependencies": {
+    "@types/lodash": "^4.14.186"
+  }
 }
