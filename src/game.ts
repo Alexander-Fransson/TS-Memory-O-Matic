@@ -3,8 +3,8 @@ import Card from './card-component';
 
 export default class Game {
     
-    cards : string[]
-    memorySection : HTMLElement
+    cards : string[];
+    memorySection : HTMLElement;
 
     constructor(dev=false) {
 
@@ -31,49 +31,34 @@ export default class Game {
     }
 
     play() {
-        // this.memorySection.addEventListener('click',() => {
-
-        //     let allCards = document.querySelectorAll('mem-card');
-        //     let allFronts = []
-        //     // (Array.from(allCards)).filter(element => (element.dataset).includes()).length;
-
-
-        //     allCards.forEach(element  => {
-        //         const el = element as HTMLElement
-        //         console.log(el.dataset.front)
-        //         //count = allCards
-        //     });
-
-        //     console.log(this.dataset.front)
-        //     console.log(this.dataset.isfound)
-
-
-        //     if (img?.getAttribute('src') === './img/back.png') {
-
-        //         img?.setAttribute('src', './img/'+cardName+'.png');
-        //         this.setAttribute('')
-
-        //     } else {
-
-        //         img?.setAttribute('src', './img/'+this.getAttribute('data-back')+'.png');
-        //         console.log(allCards);
-
-        //     }
-
-        // });
+        this.memorySection.addEventListener('click', (e) => this.flickCard(e));
         this.renderCards()
     }
 
+    flickCard(e : any) :void {
+        const allFaces: string[] = [];
+        const allCards: NodeListOf<Card> = this.memorySection.querySelectorAll('mem-card')
+        allCards.forEach(element => allFaces.push(element.face));
+
+        if(this.checkCards(allFaces)){
+            e.target.flip();
+        }else{
+           allCards.forEach(element => {
+                element.face = element.back;
+                element.requestUpdate();
+           })
+        }
+    }
 
     renderCards() : void {
         this.cards.forEach(cardName => {
             this.memorySection.appendChild(new Card(cardName))
         });
+        console.log('renderer')
     } 
     
-    public checkCards() {
-        const allCards = document.querySelectorAll('mem-card');
-        console.log(allCards);
+    public checkCards(allFaces : string[]) {
+        return allFaces.filter(element => element !== 'back').length < 2;
     }
 }
 

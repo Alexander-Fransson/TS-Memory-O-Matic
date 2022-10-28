@@ -3,39 +3,36 @@ import {customElement, property} from 'lit/decorators.js';
 
 @customElement('mem-card')
 export default class Card extends LitElement {
-  static styles = css`p { color: blue }`;
+  static styles = css`img { margin: 0.2vw; }`;
 
-  @property()
+  @property({type: String})
   name : string;
 
-  @property()
-  face : string
+  @property({type: String})
+  face : string;
 
-  @property()
-  back: string
+  @property({type: String})
+  back: string;
 
   constructor(name : string) {
     super();
     this.name = name
-    this.setAttribute('data-front', this.name);
-    this.setAttribute('data-back', 'back');
-    this.setAttribute('data-isfound', "false");
     this.back = 'back';
     this.face = this.back;
   }
 
-  flip() {
+  flip() :void {
     if (this.face == 'back') {
         this.face = this.name;
     } else {
-        this.face = 'back';
+        this.face = this.back;
     }
+    this.requestUpdate();
   }
 
   pair() {
 
   }
-
 
   render() {
     return html`<img src="./img/${this.face}.png"/>`;

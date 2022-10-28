@@ -6096,9 +6096,6 @@
     constructor(name) {
       super();
       this.name = name;
-      this.setAttribute("data-front", this.name);
-      this.setAttribute("data-back", "back");
-      this.setAttribute("data-isfound", "false");
       this.back = "back";
       this.face = this.back;
     }
@@ -6106,8 +6103,9 @@
       if (this.face == "back") {
         this.face = this.name;
       } else {
-        this.face = "back";
+        this.face = this.back;
       }
+      this.requestUpdate();
     }
     pair() {
     }
@@ -6115,15 +6113,15 @@
       return y`<img src="./img/${this.face}.png"/>`;
     }
   };
-  __publicField(Card, "styles", i`p { color: blue }`);
+  __publicField(Card, "styles", i`img { margin: 0.2vw; }`);
   __decorateClass([
-    e5()
+    e5({ type: String })
   ], Card.prototype, "name", 2);
   __decorateClass([
-    e5()
+    e5({ type: String })
   ], Card.prototype, "face", 2);
   __decorateClass([
-    e5()
+    e5({ type: String })
   ], Card.prototype, "back", 2);
   Card = __decorateClass([
     e4("mem-card")
@@ -6155,16 +6153,30 @@
       this.memorySection = document.querySelector("#memory-section");
     }
     play() {
+      this.memorySection.addEventListener("click", (e7) => this.flickCard(e7));
       this.renderCards();
+    }
+    flickCard(e7) {
+      const allFaces = [];
+      const allCards = this.memorySection.querySelectorAll("mem-card");
+      allCards.forEach((element) => allFaces.push(element.face));
+      if (this.checkCards(allFaces)) {
+        e7.target.flip();
+      } else {
+        allCards.forEach((element) => {
+          element.face = element.back;
+          element.requestUpdate();
+        });
+      }
     }
     renderCards() {
       this.cards.forEach((cardName) => {
         this.memorySection.appendChild(new Card(cardName));
       });
+      console.log("renderer");
     }
-    checkCards() {
-      const allCards = document.querySelectorAll("mem-card");
-      console.log(allCards);
+    checkCards(allFaces) {
+      return allFaces.filter((element) => element !== "back").length < 2;
     }
   };
   new Game(true).play();
