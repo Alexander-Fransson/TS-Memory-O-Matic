@@ -6,9 +6,13 @@
   "author": "daniel-ljung-nti-johanneberg <daniel.ljung@elev.ga.ntig.se>",
   "license": "MIT",
   "dependencies": {
+    "lit": "^2.4.0",
     "lodash": "^4.17.21"
   },
   "devDependencies": {
     "@types/lodash": "^4.14.186"
+  },
+  "scripts": {
+    "dev": "esbuild src/game.ts --bundle --outdir=out --watch"
   }
 }
