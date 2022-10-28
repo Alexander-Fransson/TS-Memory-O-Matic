@@ -25,7 +25,7 @@ export default class Card extends HTMLElement {
             allCards.forEach(element  => {
                 const el = element as HTMLElement
                 console.log(el.dataset)
-                count = allCards
+                //count = allCards
             });
 
             console.log(this.dataset.front)

@@ -1,4 +1,4 @@
-import {shuffle} from 'lodash'
+import {shuffle} from 'lodash';
 import Card from './card-component';
 
 export default class Game {

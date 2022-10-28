@@ -3035,16 +3035,16 @@
             return setToString(wrapper, insertWrapDetails(source, updateWrapDetails(getWrapDetails(source), bitmask)));
           }
           function shortOut(func) {
-            var count2 = 0, lastCalled = 0;
+            var count = 0, lastCalled = 0;
             return function() {
               var stamp = nativeNow(), remaining = HOT_SPAN - (stamp - lastCalled);
               lastCalled = stamp;
               if (remaining > 0) {
-                if (++count2 >= HOT_COUNT) {
+                if (++count >= HOT_COUNT) {
                   return arguments[0];
                 }
               } else {
-                count2 = 0;
+                count = 0;
               }
               return func.apply(undefined, arguments);
             };
@@ -5478,7 +5478,6 @@
         allCards.forEach((element) => {
           const el = element;
           console.log(el.dataset);
-          count = allCards;
         });
         console.log(this.dataset.front);
         console.log(this.dataset.isfound);

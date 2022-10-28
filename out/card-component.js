@@ -15,7 +15,6 @@
         allCards.forEach((element) => {
           const el = element;
           console.log(el.dataset);
-          count = allCards;
         });
         console.log(this.dataset.front);
         console.log(this.dataset.isfound);
