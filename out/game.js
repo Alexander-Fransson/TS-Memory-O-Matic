@@ -1210,7 +1210,7 @@
             if (typeof func != "function") {
               throw new TypeError2(FUNC_ERROR_TEXT);
             }
-            return setTimeout(function() {
+            return setTimeout2(function() {
               func.apply(undefined, args);
             }, wait);
           }
@@ -3041,7 +3041,7 @@
             return object[key];
           }
           var setData = shortOut(baseSetData);
-          var setTimeout = ctxSetTimeout || function(func, wait) {
+          var setTimeout2 = ctxSetTimeout || function(func, wait) {
             return root.setTimeout(func, wait);
           };
           var setToString = shortOut(baseSetToString);
@@ -3833,7 +3833,7 @@
             }
             function leadingEdge(time) {
               lastInvokeTime = time;
-              timerId = setTimeout(timerExpired, wait);
+              timerId = setTimeout2(timerExpired, wait);
               return leading ? invokeFunc(time) : result2;
             }
             function remainingWait(time) {
@@ -3849,7 +3849,7 @@
               if (shouldInvoke(time)) {
                 return trailingEdge(time);
               }
-              timerId = setTimeout(timerExpired, remainingWait(time));
+              timerId = setTimeout2(timerExpired, remainingWait(time));
             }
             function trailingEdge(time) {
               timerId = undefined;
@@ -3880,12 +3880,12 @@
                 }
                 if (maxing) {
                   clearTimeout(timerId);
-                  timerId = setTimeout(timerExpired, wait);
+                  timerId = setTimeout2(timerExpired, wait);
                   return invokeFunc(lastCallTime);
                 }
               }
               if (timerId === undefined) {
-                timerId = setTimeout(timerExpired, wait);
+                timerId = setTimeout2(timerExpired, wait);
               }
               return result2;
             }
@@ -6093,11 +6093,13 @@
     name;
     face;
     back;
+    paired;
     constructor(name) {
       super();
       this.name = name;
       this.back = "back";
       this.face = this.back;
+      this.paired = false;
     }
     flip() {
       if (this.face == "back") {
@@ -6107,10 +6109,14 @@
       }
       this.requestUpdate();
     }
-    pair() {
+    setPair() {
+      this.paired = true;
+    }
+    display() {
+      return this.paired ? this.name : this.face;
     }
     render() {
-      return y`<img src="./img/${this.face}.png"/>`;
+      return y`<img src="./img/${this.display()}.png"/>`;
     }
   };
   __publicField(Card, "styles", i`img { margin: 0.2vw; }`);
@@ -6123,6 +6129,9 @@
   __decorateClass([
     e5({ type: String })
   ], Card.prototype, "back", 2);
+  __decorateClass([
+    e5({ type: Boolean })
+  ], Card.prototype, "paired", 2);
   Card = __decorateClass([
     e4("mem-card")
   ], Card);
@@ -6132,6 +6141,7 @@
     cards;
     memorySection;
     constructor(dev = false) {
+      this.memorySection = document.querySelector("#memory-section");
       this.cards = [
         "1_pig",
         "2_squirrel",
@@ -6150,36 +6160,58 @@
       if (!dev) {
         this.cards = (0, import_lodash.shuffle)(this.cards);
       }
-      this.memorySection = document.querySelector("#memory-section");
     }
     play() {
       this.memorySection.addEventListener("click", (e7) => this.flickCard(e7));
       this.renderCards();
     }
     flickCard(e7) {
-      const allFaces = [];
-      const allCards = this.memorySection.querySelectorAll("mem-card");
-      allCards.forEach((element) => allFaces.push(element.face));
-      if (this.checkCards(allFaces)) {
+      if (this.checkCards(this.updateBoardView().allFaces) < 1) {
         e7.target.flip();
+      } else if (this.checkCards(this.updateBoardView().allFaces) < 2) {
+        e7.target.flip();
+        this.pair(this.updateBoardView().allCards, this.updateBoardView().allFaces);
+        setTimeout(() => {
+          this.updateBoardView().allCards.forEach((element) => {
+            element.face = element.back;
+            element.requestUpdate();
+          });
+        }, 2e3);
       } else {
-        allCards.forEach((element) => {
-          element.face = element.back;
-          element.requestUpdate();
-        });
       }
     }
     renderCards() {
       this.cards.forEach((cardName) => {
         this.memorySection.appendChild(new Card(cardName));
       });
-      console.log("renderer");
+    }
+    updateBoardView() {
+      const allFaces = [];
+      const allCards = this.memorySection.querySelectorAll("mem-card");
+      allCards.forEach((element) => allFaces.push(element.face));
+      return {
+        allFaces,
+        allCards
+      };
     }
     checkCards(allFaces) {
-      return allFaces.filter((element) => element !== "back").length < 2;
+      return allFaces.filter((element) => element !== "back").length;
+    }
+    pair(allCards, allFaces) {
+      const indexes = [];
+      allFaces.forEach((element, index) => {
+        if (element !== "back") {
+          indexes.push(index);
+        }
+      });
+      if (allFaces[indexes[0]] === allFaces[indexes[1]] && indexes.length > 1) {
+        console.log("pair");
+        allCards[indexes[0]]?.setPair();
+        allCards[indexes[1]]?.setPair();
+      }
     }
   };
-  new Game(true).play();
+  new Game(false).play();
 })();
 /**
  * @license

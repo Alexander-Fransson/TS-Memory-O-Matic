@@ -7,7 +7,7 @@ export default class Game {
     memorySection : HTMLElement;
 
     constructor(dev=false) {
-
+        this.memorySection = document.querySelector('#memory-section')!;
         this.cards = [
             '1_pig',
             '2_squirrel',
@@ -22,12 +22,10 @@ export default class Game {
             '11_penguin',
             '12_racoon',
         ];
-
-        this.cards = this.cards.flatMap(card => [card, card])
+        this.cards = this.cards.flatMap(card => [card, card]);
         if (!dev) {
             this.cards = shuffle(this.cards)
         }
-        this.memorySection = document.querySelector('#memory-section')!
     }
 
     play() {
@@ -36,30 +34,63 @@ export default class Game {
     }
 
     flickCard(e : any) :void {
-        const allFaces: string[] = [];
-        const allCards: NodeListOf<Card> = this.memorySection.querySelectorAll('mem-card')
-        allCards.forEach(element => allFaces.push(element.face));
 
-        if(this.checkCards(allFaces)){
-            e.target.flip();
-        }else{
-           allCards.forEach(element => {
-                element.face = element.back;
-                element.requestUpdate();
-           })
+        if(this.checkCards(this.updateBoardView().allFaces) < 1){
+            e.target.flip();   
         }
+        else if(this.checkCards(this.updateBoardView().allFaces) < 2){
+
+            e.target.flip();
+
+            this.pair(this.updateBoardView().allCards,this.updateBoardView().allFaces);
+
+            setTimeout(() => {
+                this.updateBoardView().allCards.forEach(element => {
+                    element.face = element.back;
+                    element.requestUpdate();
+               });
+            }, 2000);
+        }
+        else{}
     }
 
     renderCards() : void {
         this.cards.forEach(cardName => {
             this.memorySection.appendChild(new Card(cardName))
         });
-        console.log('renderer')
     } 
+
+    updateBoardView() {
+        const allFaces: string[] = [];
+        const allCards: NodeListOf<Card> = this.memorySection.querySelectorAll('mem-card')
+        allCards.forEach(element => allFaces.push(element.face));
+
+        return {
+            allFaces: allFaces,
+            allCards: allCards,
+        };
+    }
     
-    public checkCards(allFaces : string[]) {
-        return allFaces.filter(element => element !== 'back').length < 2;
+    checkCards(allFaces : string[]) {
+        return allFaces.filter(element => element !== 'back').length;
+    }
+
+    pair(allCards: NodeListOf<Card>, allFaces: string[]) {
+
+        const indexes: number[] = [];
+        
+        allFaces.forEach((element, index) => {
+            if(element !== 'back'){
+                indexes.push(index);
+            }
+        });
+
+        if(allFaces[indexes[0]!] === allFaces[indexes[1]!] && indexes.length > 1){
+            console.log('pair');
+            allCards[indexes[0]!]?.setPair();
+            allCards[indexes[1]!]?.setPair();
+        }
     }
 }
 
-new Game(true).play();
+new Game(false).play();

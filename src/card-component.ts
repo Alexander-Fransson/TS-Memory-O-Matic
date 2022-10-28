@@ -14,14 +14,18 @@ export default class Card extends LitElement {
   @property({type: String})
   back: string;
 
+  @property({type: Boolean})
+  paired: boolean;
+
   constructor(name : string) {
     super();
     this.name = name
     this.back = 'back';
     this.face = this.back;
+    this.paired = false;
   }
 
-  flip() :void {
+  flip(): void {
     if (this.face == 'back') {
         this.face = this.name;
     } else {
@@ -30,11 +34,15 @@ export default class Card extends LitElement {
     this.requestUpdate();
   }
 
-  pair() {
+  setPair(): void{
+    this.paired = true;
+  }
 
+  display(): string {
+    return this.paired? this.name: this.face;
   }
 
   render() {
-    return html`<img src="./img/${this.face}.png"/>`;
+    return html`<img src="./img/${this.display()}.png"/>`;
   }
 }
